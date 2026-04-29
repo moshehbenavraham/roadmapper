@@ -12,6 +12,17 @@ export interface CommentWithProfile {
   avatar_url: string | null;
 }
 
+interface CommentQueryRow {
+  id: string;
+  content: string;
+  created_at: string;
+  user_id: string;
+  profiles: {
+    display_name: string | null;
+    avatar_url: string | null;
+  } | null;
+}
+
 export function useComments(itemId: string | null) {
   const queryClient = useQueryClient();
 
@@ -27,7 +38,7 @@ export function useComments(itemId: string | null) {
 
       if (error) throw error;
 
-      return (data ?? []).map((c: any) => ({
+      return ((data ?? []) as CommentQueryRow[]).map((c) => ({
         id: c.id,
         content: c.content,
         created_at: c.created_at,

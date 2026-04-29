@@ -72,7 +72,7 @@ export default function Analytics() {
         <SEOHead
           title="Analytics — Roadmapper"
           description="Track roadmap progress with status breakdowns, priority distribution, and key performance metrics."
-          url="https://myroadmapcanvas.lovable.app/app/analytics"
+          url="/app/analytics"
         />
         <div className="min-h-screen flex w-full">
         <AppSidebar

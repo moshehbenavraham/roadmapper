@@ -14,6 +14,15 @@ interface MemberWithProfile {
   avatar_url: string | null;
 }
 
+interface MemberQueryRow {
+  user_id: string;
+  role: string;
+  profiles: {
+    display_name: string | null;
+    avatar_url: string | null;
+  } | null;
+}
+
 export function MembersList({ workspaceId }: MembersListProps) {
   const { data: members = [], isLoading } = useQuery({
     queryKey: ["workspace-members", workspaceId],
@@ -27,7 +36,7 @@ export function MembersList({ workspaceId }: MembersListProps) {
 
       if (error) throw error;
 
-      return (data ?? []).map((m: any) => ({
+      return ((data ?? []) as MemberQueryRow[]).map((m) => ({
         user_id: m.user_id,
         role: m.role,
         display_name: m.profiles?.display_name ?? null,

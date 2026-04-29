@@ -10,6 +10,9 @@ import { celebrateStatusCompleted } from "@/lib/celebrations";
 import type { RoadmapItemRow } from "@/hooks/useRoadmap";
 import type { TablesUpdate } from "@/integrations/supabase/types";
 
+type RoadmapItemStatus = NonNullable<TablesUpdate<"roadmap_items">["status"]>;
+type RoadmapItemPriority = NonNullable<TablesUpdate<"roadmap_items">["priority"]>;
+
 interface InspectorPanelProps {
   selectedItems: RoadmapItemRow[];
   onClose: () => void;
@@ -46,7 +49,7 @@ export function InspectorPanel({ selectedItems, onClose, onUpdate, onDelete, onB
             <Label className="font-display text-xs text-muted-foreground uppercase tracking-wider">Batch Status</Label>
             <Select
               onValueChange={(v) => {
-                onBatchUpdate?.(selectedItems.map((i) => i.id), { status: v as any });
+                onBatchUpdate?.(selectedItems.map((i) => i.id), { status: v as RoadmapItemStatus });
                 if (v === "completed") celebrateStatusCompleted();
               }}
             >
@@ -71,7 +74,7 @@ export function InspectorPanel({ selectedItems, onClose, onUpdate, onDelete, onB
             <Label className="font-display text-xs text-muted-foreground uppercase tracking-wider">Batch Priority</Label>
             <Select
               onValueChange={(v) => {
-                onBatchUpdate?.(selectedItems.map((i) => i.id), { priority: v as any });
+                onBatchUpdate?.(selectedItems.map((i) => i.id), { priority: v as RoadmapItemPriority });
               }}
             >
               <SelectTrigger className="font-body text-sm">

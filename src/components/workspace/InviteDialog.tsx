@@ -42,8 +42,9 @@ export function InviteDialog({ workspaceId }: InviteDialogProps) {
       toast.success(`Invitation sent to ${email}`);
       setEmail("");
       setOpen(false);
-    } catch (err: any) {
-      if (err?.code === "23505") {
+    } catch (err) {
+      const code = err && typeof err === "object" && "code" in err ? (err as { code?: string }).code : undefined;
+      if (code === "23505") {
         toast.error("This email has already been invited");
       } else {
         toast.error("Failed to send invitation");

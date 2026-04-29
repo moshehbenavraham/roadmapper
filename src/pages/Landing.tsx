@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
 import WavyRouteLine from "@/components/ui/WavyRouteLine";
 import jamieChenPhoto from "@/assets/jamie-chen.jpg";
+import heroRoad from "@/assets/hero-road.jpg";
 import {
   Map,
   MapPin,
@@ -16,7 +17,6 @@ import {
   Users,
   BarChart3,
 } from "lucide-react";
-import heroPastel from "@/assets/hero-pastel.jpg.asset.json";
 import DevPanel from "@/components/dev/DevPanel";
 
 /* ─── Logo icon options ─── */
@@ -184,7 +184,7 @@ export default function Landing() {
       <SEOHead
         title="Roadmapper — Ship the right things, in the right order"
         description="The visual roadmap tool that keeps your team aligned. Drag, drop, and plan product priorities on one shared canvas."
-        url="https://myroadmapcanvas.lovable.app/"
+        url="/"
       />
 
       {/* ─── Dev Panel ─── */}
@@ -224,7 +224,7 @@ export default function Landing() {
           <div ref={heroRef} className="relative rounded-2xl overflow-hidden border border-foreground/10">
             {/* Background image (absolute) */}
             <img
-              src={heroPastel.url}
+              src={heroRoad}
               alt="A forest road winding through autumn trees — representing the journey of product planning"
               className="absolute inset-0 w-full h-full object-cover"
             />

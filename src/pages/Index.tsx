@@ -25,6 +25,10 @@ import {
   useCreateRoadmap,
   useDeleteRoadmap,
 } from "@/hooks/useRoadmap";
+import type { TablesUpdate } from "@/integrations/supabase/types";
+
+type RoadmapItemUpdate = TablesUpdate<"roadmap_items">;
+type RoadmapItemUpdateWithId = RoadmapItemUpdate & { id: string };
 
 const TEMPLATE_ITEMS = [
   { title: "Discovery & Research", status: "completed" as const, priority: "high" as const, sort_order: 0 },
@@ -96,7 +100,7 @@ export default function Index() {
 
   const handleItemDragEnd = useCallback(
     (id: string, x: number, y: number, startDate?: string, endDate?: string) => {
-      const updates: any = { id, position_x: x, position_y: y };
+      const updates: RoadmapItemUpdateWithId = { id, position_x: x, position_y: y };
       if (startDate) updates.start_date = startDate;
       if (endDate) updates.end_date = endDate;
       updateItem.mutate(updates, {
@@ -187,7 +191,7 @@ export default function Index() {
   );
 
   const handleBatchUpdate = useCallback(
-    (ids: string[], updates: any) => {
+    (ids: string[], updates: RoadmapItemUpdate) => {
       ids.forEach((id) => updateItem.mutate({ id, ...updates }));
     },
     [updateItem]
