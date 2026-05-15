@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import SEOHead from "@/components/SEOHead";
 
 export default function AcceptInvite() {
   const { token } = useParams<{ token: string }>();
@@ -79,20 +80,30 @@ export default function AcceptInvite() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-3 p-8">
+      <SEOHead
+        title="Accept invitation — Roadmapper"
+        description="Accept your invitation to join a Roadmapper workspace."
+        url="/invite"
+        noindex
+      />
+      <div
+        className="text-center space-y-3 p-8"
+        role="status"
+        aria-live="polite"
+      >
         {status === "loading" && (
           <p className="font-display text-sm text-muted-foreground">Accepting invitation...</p>
         )}
         {status === "login_required" && (
           <>
             <p className="font-display text-sm text-foreground">Please log in to accept this invitation.</p>
-            <a href="/login" className="font-display text-sm text-primary underline">Go to Login</a>
+            <Link to="/login" className="font-display text-sm text-primary underline">Go to Login</Link>
           </>
         )}
         {status === "error" && (
           <>
             <p className="font-display text-sm text-destructive">Unable to accept invitation.</p>
-            <a href="/" className="font-display text-sm text-primary underline">Go to Dashboard</a>
+            <Link to="/" className="font-display text-sm text-primary underline">Go to Dashboard</Link>
           </>
         )}
         {status === "success" && (

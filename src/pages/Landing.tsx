@@ -187,17 +187,61 @@ export default function Landing() {
         url="/"
       />
 
-      {/* ─── Dev Panel ─── */}
-      <DevPanel
-        layoutIndex={layoutIndex}
-        setLayoutIndex={setLayoutIndex}
+      {/* SoftwareApplication structured data for search engines */}
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "Roadmapper",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web",
+            description:
+              "The visual roadmap tool that keeps your team aligned. Drag, drop, and plan product priorities on one shared canvas.",
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "USD",
+            },
+            featureList: [
+              "Drag-and-drop roadmap canvas",
+              "Real-time team collaboration",
+              "Inline comments and assignments",
+              "Built-in roadmap analytics",
+            ],
+          }),
+        }}
       />
 
+      {/* Skip-to-content link for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:font-display focus:text-sm focus:text-primary-foreground focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+        Skip to main content
+      </a>
+
+      {/* ─── Dev Panel (development only) ─── */}
+      {import.meta.env.DEV && (
+        <DevPanel
+          layoutIndex={layoutIndex}
+          setLayoutIndex={setLayoutIndex}
+        />
+      )}
+
       {/* ─── Fixed nav — slides in after 160px scroll ─── */}
-      <div className={`fixed top-0 left-0 right-0 z-50 px-6 pt-4 transition-transform duration-300 ease-out ${
-        showFixedNav ? "translate-y-0" : "-translate-y-full"
-      }`}>
-        <nav className="mx-auto max-w-5xl flex items-center justify-between px-5 py-3 bg-[hsl(164,100%,6%)] backdrop-blur-xl rounded-xl shadow-lg">
+      <div
+        aria-hidden={!showFixedNav}
+        className={`fixed top-0 left-0 right-0 z-50 px-6 pt-4 transition-transform duration-300 ease-out ${
+          showFixedNav ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
+        <nav
+          aria-label="Primary"
+          className="mx-auto max-w-5xl flex items-center justify-between px-5 py-3 bg-[hsl(164,100%,6%)] backdrop-blur-xl rounded-xl shadow-lg"
+        >
           <Link to="/" className="flex items-center gap-2">
             <LogoIcon className="h-5 w-5 text-white" />
             <span className="font-display text-base font-bold text-white">Roadmapper</span>
@@ -217,6 +261,7 @@ export default function Landing() {
         </nav>
       </div>
 
+      <main id="main-content" tabIndex={-1}>
       {/* ─── Section 1: Hero ─── */}
       <section className="px-6 pt-4 sm:pt-6">
         <div className="mx-auto max-w-5xl">
@@ -421,6 +466,7 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </main>
 
       {/* ─── Footer ─── */}
       <footer className="px-6 py-8 border-t border-border/30">

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import AuthLayout from "@/components/auth/AuthLayout";
+import SEOHead from "@/components/SEOHead";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -36,13 +37,27 @@ export default function ResetPassword() {
   if (!ready) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[hsl(60,20%,95.5%)]">
-        <p className="font-display text-sm text-muted-foreground">Validating reset link...</p>
+        <SEOHead
+          title="Reset password — Roadmapper"
+          description="Set a new password for your Roadmapper account."
+          url="/reset-password"
+          noindex
+        />
+        <p className="font-display text-sm text-muted-foreground" role="status" aria-live="polite">
+          Validating reset link...
+        </p>
       </div>
     );
   }
 
   return (
     <AuthLayout>
+      <SEOHead
+        title="Set new password — Roadmapper"
+        description="Set a new password for your Roadmapper account."
+        url="/reset-password"
+        noindex
+      />
       <div className="text-center space-y-2">
         <h1 className="font-display text-2xl font-semibold text-foreground">Set new password</h1>
       </div>

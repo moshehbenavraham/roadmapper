@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import AuthLayout from "@/components/auth/AuthLayout";
+import SEOHead from "@/components/SEOHead";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -28,6 +29,12 @@ export default function ForgotPassword() {
 
   return (
     <AuthLayout>
+      <SEOHead
+        title="Reset password — Roadmapper"
+        description="Request a password reset link for your Roadmapper account."
+        url="/forgot-password"
+        noindex
+      />
       <div className="text-center space-y-2">
         <h1 className="font-display text-2xl font-semibold text-foreground">Reset password</h1>
         <p className="font-body text-sm text-muted-foreground">

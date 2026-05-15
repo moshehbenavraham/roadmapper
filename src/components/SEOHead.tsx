@@ -15,6 +15,12 @@ interface SEOHeadProps {
   image?: string;
   url?: string;
   type?: string;
+  /**
+   * When true, adds `<meta name="robots" content="noindex,nofollow">` for the
+   * lifetime of the component. Use for auth pages, password reset flows,
+   * invitation-acceptance routes, and 404 pages where indexing is unwanted.
+   */
+  noindex?: boolean;
 }
 
 function setMeta(property: string, content: string, isName = false) {
@@ -26,6 +32,12 @@ function setMeta(property: string, content: string, isName = false) {
     document.head.appendChild(el);
   }
   el.setAttribute("content", content);
+}
+
+function removeMeta(property: string, isName = false) {
+  const attr = isName ? "name" : "property";
+  const el = document.querySelector(`meta[${attr}="${property}"]`);
+  if (el) el.remove();
 }
 
 function toAbsoluteUrl(value: string) {
@@ -42,6 +54,7 @@ export default function SEOHead({
   image = DEFAULTS.image,
   url = DEFAULTS.url,
   type = DEFAULTS.type,
+  noindex = false,
 }: SEOHeadProps) {
   useEffect(() => {
     const pageUrl = toAbsoluteUrl(url);
@@ -71,6 +84,12 @@ export default function SEOHead({
     }
     canonical.setAttribute("href", pageUrl);
 
+    if (noindex) {
+      setMeta("robots", "noindex,nofollow", true);
+    } else {
+      removeMeta("robots", true);
+    }
+
     return () => {
       document.title = DEFAULTS.title;
       setMeta("og:title", DEFAULTS.title);
@@ -82,8 +101,11 @@ export default function SEOHead({
       setMeta("twitter:description", DEFAULTS.description, true);
       setMeta("twitter:image", defaultImage, true);
       setMeta("description", DEFAULTS.description, true);
+      if (noindex) {
+        removeMeta("robots", true);
+      }
     };
-  }, [title, description, image, url, type]);
+  }, [title, description, image, url, type, noindex]);
 
   return null;
 }
