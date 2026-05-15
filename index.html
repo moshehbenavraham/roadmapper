@@ -6,7 +6,10 @@
     <title>Roadmapper — Visual Roadmap Planning</title>
     <meta name="description" content="The visual roadmap tool that keeps your team aligned. Drag, drop, and plan product priorities on one shared canvas." />
     <meta name="author" content="Roadmapper" />
-    <meta name="theme-color" content="#0d3d2e" />
+    <!-- Address bar color follows OS preference; the in-app toggle further
+         updates the .dark class for full theme switching. -->
+    <meta name="theme-color" content="#faf9f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#081a13" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
 
     <meta property="og:type" content="website" />
@@ -24,6 +27,35 @@
     <meta name="twitter:image" content="/social-card.svg" />
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!--
+      Anti-FOUC theme bootstrap.
+      Runs before paint so the .dark class and native color-scheme are set
+      before React mounts, avoiding a flash of light theme for dark-mode
+      visitors. Key must match next-themes' default storageKey ("theme").
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = stored || "system";
+          var isDark = theme === "dark" || (theme === "system" && prefersDark);
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add("dark");
+            root.style.colorScheme = "dark";
+          } else {
+            root.classList.remove("dark");
+            root.style.colorScheme = "light";
+          }
+        } catch (_) {
+          /* localStorage / matchMedia unavailable — fall back to default light */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -36,7 +36,7 @@ export default function ResetPassword() {
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[hsl(60,20%,95.5%)]">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <SEOHead
           title="Reset password — Roadmapper"
           description="Set a new password for your Roadmapper account."

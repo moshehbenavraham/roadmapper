@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import WavyRouteLine from "@/components/ui/WavyRouteLine";
 import jamieChenPhoto from "@/assets/jamie-chen.jpg";
 import heroRoad from "@/assets/hero-road.jpg";
@@ -180,7 +181,7 @@ export default function Landing() {
   const ActiveLayout = LAYOUTS[layoutIndex];
 
   return (
-    <div className="min-h-screen bg-[hsl(60,20%,95.5%)]">
+    <div className="min-h-screen bg-background">
       <SEOHead
         title="Roadmapper — Ship the right things, in the right order"
         description="The visual roadmap tool that keeps your team aligned. Drag, drop, and plan product priorities on one shared canvas."
@@ -240,15 +241,16 @@ export default function Landing() {
       >
         <nav
           aria-label="Primary"
-          className="mx-auto max-w-5xl flex items-center justify-between px-5 py-3 bg-[hsl(164,100%,6%)] backdrop-blur-xl rounded-xl shadow-lg"
+          className="mx-auto max-w-5xl flex items-center justify-between px-5 py-3 bg-foreground text-background backdrop-blur-xl rounded-xl shadow-lg"
         >
           <Link to="/" className="flex items-center gap-2">
-            <LogoIcon className="h-5 w-5 text-white" />
-            <span className="font-display text-base font-bold text-white">Roadmapper</span>
+            <LogoIcon className="h-5 w-5" />
+            <span className="font-display text-base font-bold">Roadmapper</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <ThemeToggle className="text-background/80 hover:text-background hover:bg-background/10 h-9 w-9" />
             <Link to="/login">
-              <Button variant="ghost" size="sm" className="font-display text-sm text-white/80 hover:text-white hover:bg-white/10">
+              <Button variant="ghost" size="sm" className="font-display text-sm text-background/80 hover:text-background hover:bg-background/10">
                 Sign in
               </Button>
             </Link>
@@ -273,9 +275,9 @@ export default function Landing() {
               alt="A forest road winding through autumn trees — representing the journey of product planning"
               className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-white/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-background/20" />
             {/* Top subtle gradient for nav area */}
-            <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-[hsl(60,20%,97.5%)]/85 via-[hsl(60,20%,97.5%)]/50 to-transparent z-[1]" />
+            <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-background/85 via-background/50 to-transparent z-[1]" />
 
             {/* Static nav — inside hero, scrolls away naturally */}
             <div className="relative z-10 px-4 pt-4">
@@ -284,7 +286,8 @@ export default function Landing() {
                   <LogoIcon className="h-5 w-5 text-foreground" />
                   <span className="font-display text-base font-bold text-foreground">Roadmapper</span>
                 </Link>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <ThemeToggle className="text-foreground/70 hover:text-foreground hover:bg-foreground/5 h-9 w-9" />
                   <Link to="/login">
                     <Button variant="ghost" size="sm" className="font-display text-sm text-foreground/70 hover:text-foreground hover:bg-foreground/5">
                       Sign in
@@ -320,11 +323,11 @@ export default function Landing() {
 
           {/* Demo UI card — in flow, negative margin pulls it up to overlap hero */}
           <div className="mx-8 -mt-24 sm:-mt-32 relative z-20">
-            <div className="rounded-xl border border-border/60 bg-white shadow-lg shadow-black/8 overflow-hidden">
+            <div className="rounded-xl border border-border/60 bg-card shadow-lg shadow-black/8 overflow-hidden">
               {/* Mock app UI */}
               <div className="flex" style={{ height: 340 }}>
                 {/* Sidebar */}
-                <div className="w-44 border-r border-border/50 bg-white p-3 flex flex-col gap-1 shrink-0">
+                <div className="w-44 border-r border-border/50 bg-card p-3 flex flex-col gap-1 shrink-0">
                   <div className="flex items-center gap-2 px-2 py-1.5 mb-3">
                     <Route className="h-4 w-4 text-foreground" />
                     <span className="font-display text-xs font-bold text-foreground">Roadmapper</span>
@@ -335,9 +338,9 @@ export default function Landing() {
                   <div className="mt-auto px-2 py-1.5 text-[10px] text-muted-foreground/60">3 roadmaps</div>
                 </div>
                 {/* Canvas area */}
-                <div className="flex-1 bg-[hsl(60,20%,97.5%)] flex flex-col">
+                <div className="flex-1 bg-background flex flex-col">
                   {/* Timeline header */}
-                  <div className="flex border-b border-border/40 bg-white/80">
+                  <div className="flex border-b border-border/40 bg-card/80">
                     <div className="flex-1 px-4 py-2 text-[10px] font-display font-semibold text-muted-foreground uppercase tracking-wider border-r border-border/30">Q1 2025</div>
                     <div className="flex-1 px-4 py-2 text-[10px] font-display font-semibold text-muted-foreground uppercase tracking-wider border-r border-border/30">Q2 2025</div>
                     <div className="flex-1 px-4 py-2 text-[10px] font-display font-semibold text-muted-foreground uppercase tracking-wider border-r border-border/30">Q3 2025</div>
@@ -346,7 +349,7 @@ export default function Landing() {
                   {/* Cards */}
                   <div className="flex-1 relative p-4">
                     {/* Card 1 - Completed */}
-                    <div className="absolute left-4 top-4 w-36 rounded-lg border border-border/50 bg-white p-2.5 shadow-sm">
+                    <div className="absolute left-4 top-4 w-36 rounded-lg border border-border/50 bg-card p-2.5 shadow-sm">
                       <div className="w-full h-0.5 rounded-full bg-[#16A34A] mb-2" />
                       <p className="text-[11px] font-medium text-foreground">User research</p>
                       <div className="flex items-center gap-1 mt-1.5">
@@ -355,7 +358,7 @@ export default function Landing() {
                       </div>
                     </div>
                     {/* Card 2 - In Progress */}
-                    <div className="absolute left-44 top-20 w-40 rounded-lg border border-border/50 bg-white p-2.5 shadow-sm">
+                    <div className="absolute left-44 top-20 w-40 rounded-lg border border-border/50 bg-card p-2.5 shadow-sm">
                       <div className="w-full h-0.5 rounded-full bg-[#D97706] mb-2" />
                       <p className="text-[11px] font-medium text-foreground">Design system v2</p>
                       <div className="flex items-center gap-1 mt-1.5">
@@ -364,7 +367,7 @@ export default function Landing() {
                       </div>
                     </div>
                     {/* Card 3 - Planned */}
-                    <div className="absolute right-16 top-8 w-36 rounded-lg border border-border/50 bg-white p-2.5 shadow-sm">
+                    <div className="absolute right-16 top-8 w-36 rounded-lg border border-border/50 bg-card p-2.5 shadow-sm">
                       <div className="w-full h-0.5 rounded-full bg-[#9CA3AF] mb-2" />
                       <p className="text-[11px] font-medium text-foreground">API integration</p>
                       <div className="flex items-center gap-1 mt-1.5">
@@ -373,7 +376,7 @@ export default function Landing() {
                       </div>
                     </div>
                     {/* Card 4 - In Progress */}
-                    <div className="absolute left-8 top-40 w-44 rounded-lg border border-border/50 bg-white p-2.5 shadow-sm">
+                    <div className="absolute left-8 top-40 w-44 rounded-lg border border-border/50 bg-card p-2.5 shadow-sm">
                       <div className="w-full h-0.5 rounded-full bg-[#D97706] mb-2" />
                       <p className="text-[11px] font-medium text-foreground">Onboarding flow</p>
                       <div className="flex items-center gap-1 mt-1.5">
@@ -382,7 +385,7 @@ export default function Landing() {
                       </div>
                     </div>
                     {/* Card 5 - Planned */}
-                    <div className="absolute right-8 top-44 w-36 rounded-lg border border-border/50 bg-white p-2.5 shadow-sm">
+                    <div className="absolute right-8 top-44 w-36 rounded-lg border border-border/50 bg-card p-2.5 shadow-sm">
                       <div className="w-full h-0.5 rounded-full bg-[#9CA3AF] mb-2" />
                       <p className="text-[11px] font-medium text-foreground">Launch beta</p>
                       <div className="flex items-center gap-1 mt-1.5">
@@ -426,13 +429,13 @@ export default function Landing() {
 
       {/* ─── Section 3: Social proof ─── */}
       <section className="px-6 py-4">
-        <div className="mx-auto max-w-5xl rounded-2xl bg-[hsl(55,20%,89%)] px-8 py-20 sm:py-24">
+        <div className="mx-auto max-w-5xl rounded-2xl bg-secondary px-8 py-20 sm:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xl sm:text-2xl text-foreground leading-relaxed italic">
               "We replaced three tools and a weekly status meeting. Roadmapper is the only planning surface our team actually opens every day."
             </p>
             <div className="mt-6 flex items-center justify-center gap-3">
-              <img src={jamieChenPhoto} alt="Jamie Chen" className="h-10 w-10 rounded-full object-cover border border-[hsl(55,15%,78%)]" />
+              <img src={jamieChenPhoto} alt="Jamie Chen" className="h-10 w-10 rounded-full object-cover border border-border/60" />
               <div className="text-left">
                 <p className="font-display text-sm font-medium text-foreground">Jamie Chen</p>
                 <p className="text-xs text-muted-foreground">Head of Product, Series B startup</p>

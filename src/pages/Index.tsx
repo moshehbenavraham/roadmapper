@@ -11,6 +11,7 @@ import { MobileInspectorDrawer } from "@/components/layout/MobileInspectorDrawer
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Plus, LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -325,6 +326,7 @@ export default function Index() {
                   </Button>
                 </>
               )}
+              <ThemeToggle className="h-7 w-7" />
               {!isMobile && (
                 <Button
                   variant="secondary"
