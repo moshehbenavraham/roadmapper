@@ -6,17 +6,52 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Route, CheckCircle2, Clock, AlertTriangle, Layers } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useTheme } from "next-themes";
 import SEOHead from "@/components/SEOHead";
 
-// Brand-aligned chart colors using the Emerald design system
-const COLORS = {
+// Brand-aligned chart palettes for the Emerald design system.
+// In light mode the original deep-emerald hues sit on a cream surface; in dark
+// mode those same hues blend into the dark background (especially `high` at
+// 10% lightness, which is essentially the dark bg color). Picking a paired
+// dark palette keeps every series visible without losing brand identity.
+const LIGHT_CHART_COLORS = {
   completed: "hsl(160, 84%, 18%)",
   in_progress: "hsl(160, 84%, 32%)",
   planned: "hsl(60, 20%, 80%)",
   high: "hsl(160, 50%, 10%)",
   medium: "hsl(160, 84%, 28%)",
   low: "hsl(60, 20%, 80%)",
+};
+
+const DARK_CHART_COLORS = {
+  completed: "hsl(160, 65%, 60%)",
+  in_progress: "hsl(160, 70%, 45%)",
+  planned: "hsl(60, 12%, 58%)",
+  high: "hsl(160, 75%, 70%)",
+  medium: "hsl(160, 70%, 45%)",
+  low: "hsl(60, 12%, 58%)",
+};
+
+// Tooltip / grid / axis chrome must follow the theme too — the original
+// hardcoded `hsl(60, 20%, 97.5%)` tooltip background reads as a glaring
+// near-white panel on the dark surface, and the gray axis labels disappear.
+const LIGHT_CHART_CHROME = {
+  tooltipBg: "hsl(60, 20%, 97.5%)",
+  tooltipBorder: "hsl(60, 15%, 87%)",
+  tooltipText: "hsl(0, 0%, 9%)",
+  gridStroke: "hsl(60, 15%, 87%)",
+  axisStroke: "hsl(60, 15%, 87%)",
+  axisTick: "hsl(0, 0%, 40%)",
+};
+
+const DARK_CHART_CHROME = {
+  tooltipBg: "hsl(160, 40%, 10%)",
+  tooltipBorder: "hsl(160, 25%, 18%)",
+  tooltipText: "hsl(60, 15%, 88%)",
+  gridStroke: "hsl(160, 25%, 18%)",
+  axisStroke: "hsl(160, 25%, 18%)",
+  axisTick: "hsl(60, 10%, 55%)",
 };
 
 export default function Analytics() {
@@ -26,6 +61,32 @@ export default function Analytics() {
   const { items, isLoading } = useAnalyticsData(workspaceId);
   const navigate = useNavigate();
   const [activeRoadmapId, setActiveRoadmapId] = useState<string | null>(null);
+
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+  const COLORS = useMemo(
+    () => (isDark ? DARK_CHART_COLORS : LIGHT_CHART_COLORS),
+    [isDark]
+  );
+  const chrome = useMemo(
+    () => (isDark ? DARK_CHART_CHROME : LIGHT_CHART_CHROME),
+    [isDark]
+  );
+  const tooltipContentStyle = useMemo(
+    () => ({
+      background: chrome.tooltipBg,
+      border: `1px solid ${chrome.tooltipBorder}`,
+      borderRadius: "8px",
+      fontFamily: "Figtree, sans-serif",
+      fontSize: "13px",
+      color: chrome.tooltipText,
+    }),
+    [chrome]
+  );
+  const tooltipItemStyle = useMemo(
+    () => ({ color: chrome.tooltipText }),
+    [chrome]
+  );
 
   const handleSelectRoadmap = (id: string) => {
     setActiveRoadmapId(id);
@@ -136,13 +197,10 @@ export default function Analytics() {
                           ))}
                         </Pie>
                         <Tooltip
-                          contentStyle={{
-                            background: "hsl(60, 20%, 97.5%)",
-                            border: "1px solid hsl(60, 15%, 87%)",
-                            borderRadius: "8px",
-                            fontFamily: "Figtree, sans-serif",
-                            fontSize: "13px",
-                          }}
+                          contentStyle={tooltipContentStyle}
+                          itemStyle={tooltipItemStyle}
+                          labelStyle={tooltipItemStyle}
+                          cursor={{ fill: chrome.gridStroke, opacity: 0.4 }}
                         />
                         <Legend
                           formatter={(value) => (
@@ -162,27 +220,24 @@ export default function Analytics() {
                   <CardContent>
                     <ResponsiveContainer width="100%" height={280}>
                       <BarChart data={priorityData} barSize={40}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(60, 15%, 87%)" vertical={true} horizontal={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={chrome.gridStroke} vertical={true} horizontal={false} />
                         <XAxis
                           dataKey="name"
-                          tick={{ fontFamily: "Figtree, sans-serif", fontSize: 12, fill: "hsl(0, 0%, 40%)" }}
-                          axisLine={{ stroke: "hsl(60, 15%, 87%)" }}
+                          tick={{ fontFamily: "Figtree, sans-serif", fontSize: 12, fill: chrome.axisTick }}
+                          axisLine={{ stroke: chrome.axisStroke }}
                           tickLine={false}
                         />
                         <YAxis
                           allowDecimals={false}
-                          tick={{ fontFamily: "Figtree, sans-serif", fontSize: 12, fill: "hsl(0, 0%, 40%)" }}
-                          axisLine={{ stroke: "hsl(60, 15%, 87%)" }}
+                          tick={{ fontFamily: "Figtree, sans-serif", fontSize: 12, fill: chrome.axisTick }}
+                          axisLine={{ stroke: chrome.axisStroke }}
                           tickLine={false}
                         />
                         <Tooltip
-                          contentStyle={{
-                            background: "hsl(60, 20%, 97.5%)",
-                            border: "1px solid hsl(60, 15%, 87%)",
-                            borderRadius: "8px",
-                            fontFamily: "Figtree, sans-serif",
-                            fontSize: "13px",
-                          }}
+                          contentStyle={tooltipContentStyle}
+                          itemStyle={tooltipItemStyle}
+                          labelStyle={tooltipItemStyle}
+                          cursor={{ fill: chrome.gridStroke, opacity: 0.4 }}
                         />
                         <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                           {priorityData.map((entry, index) => (

@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Stage, Layer, Rect, Group, Text, Line } from "react-konva";
 import Konva from "konva";
+import { useTheme } from "next-themes";
 import { parseQuarters, dateToCanvasX, canvasXToDate, MIN_DATE_WIDTH } from "@/lib/timeline";
 
 export interface RoadmapItem {
@@ -35,7 +36,35 @@ const ITEM_HEIGHT = 64;
 const ITEM_RADIUS = 10;
 const ITEM_TOP_OFFSET = 12;
 
-const COLORS = {
+/**
+ * Konva paints to a raw <canvas>, so it can't pick up Tailwind theme classes or
+ * CSS custom properties on its own. We derive a palette per theme so the
+ * roadmap canvas (the main app surface) actually honors the .dark class set by
+ * the anti-FOUC bootstrap in index.html.
+ *
+ * Light values keep the existing Atelier Kanso cream / ink palette.
+ * Dark values mirror the deep-emerald tokens in index.css (.dark) so the
+ * canvas blends with the dark sidebar/header instead of glowing cream.
+ *
+ * Status hues (planned/in_progress/completed) are intentionally constant —
+ * they're semantic state indicators readable on either surface.
+ */
+type CanvasPalette = {
+  bg: string;
+  headerBg: string;
+  grid: string;
+  inkBlack: string;
+  white: string;
+  planned: string;
+  progress: string;
+  complete: string;
+  selection: string;
+  headerText: string;
+  dragShadow: string;
+  restShadow: string;
+};
+
+const LIGHT_COLORS: CanvasPalette = {
   bg: "#F9F9F6",
   headerBg: "#FFFFFF",
   grid: "#E8E8E0",
@@ -47,6 +76,22 @@ const COLORS = {
   selection: "#BBBBAA",
   headerText: "#8A8A78",
   dragShadow: "rgba(0,0,0,0.12)",
+  restShadow: "rgba(0,0,0,0.06)",
+};
+
+const DARK_COLORS: CanvasPalette = {
+  bg: "hsl(160, 50%, 5%)",        // matches --canvas-bg (dark)
+  headerBg: "hsl(160, 40%, 10%)",  // matches --card (dark)
+  grid: "hsl(160, 25%, 18%)",      // matches --canvas-grid / --border (dark)
+  inkBlack: "hsl(60, 15%, 88%)",   // matches --foreground (dark)
+  white: "hsl(160, 40%, 10%)",     // item surface = card (dark)
+  planned: "#9CA3AF",
+  progress: "#D97706",
+  complete: "#16A34A",
+  selection: "hsl(160, 84%, 32%)", // matches --canvas-selection (dark)
+  headerText: "hsl(60, 10%, 55%)", // matches --muted-foreground (dark)
+  dragShadow: "rgba(0,0,0,0.45)",  // more pronounced shadow against dark
+  restShadow: "rgba(0,0,0,0.30)",
 };
 
 const QUARTER_LABELS = [
@@ -56,15 +101,23 @@ const QUARTER_LABELS = [
   "Q1 2028", "Q2 2028",
 ];
 
-function getStatusColor(status: RoadmapItem["status"]) {
-  switch (status) {
-    case "planned": return COLORS.planned;
-    case "in_progress": return COLORS.progress;
-    case "completed": return COLORS.complete;
-  }
-}
-
 export function RoadmapCanvas({ items, selectedItemIds, onSelectItem, onItemDragEnd, onInlineEdit, stagePos: externalStagePos, onStagePosChange }: RoadmapCanvasProps) {
+  const { resolvedTheme } = useTheme();
+  const COLORS = useMemo<CanvasPalette>(
+    () => (resolvedTheme === "dark" ? DARK_COLORS : LIGHT_COLORS),
+    [resolvedTheme]
+  );
+  const getStatusColor = useCallback(
+    (status: RoadmapItem["status"]) => {
+      switch (status) {
+        case "planned": return COLORS.planned;
+        case "in_progress": return COLORS.progress;
+        case "completed": return COLORS.complete;
+      }
+    },
+    [COLORS]
+  );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -155,12 +208,12 @@ export function RoadmapCanvas({ items, selectedItemIds, onSelectItem, onItemDrag
     node.setAttrs({ shadowBlur: 16, shadowColor: COLORS.dragShadow, shadowOffsetY: 6 });
     node.moveToTop();
     node.getLayer()?.batchDraw();
-  }, []);
+  }, [COLORS]);
 
   const handleDragEnd = useCallback((e: Konva.KonvaEventObject<DragEvent>, item: RoadmapItem & { width: number }) => {
     setDraggingId(null);
     const node = e.target;
-    node.setAttrs({ shadowBlur: 10, shadowColor: "rgba(0,0,0,0.06)", shadowOffsetY: 2 });
+    node.setAttrs({ shadowBlur: 10, shadowColor: COLORS.restShadow, shadowOffsetY: 2 });
     node.getLayer()?.batchDraw();
 
     const newX = node.x();
@@ -174,7 +227,7 @@ export function RoadmapCanvas({ items, selectedItemIds, onSelectItem, onItemDrag
       }
     }
     onItemDragEnd(item.id, newX, newY, startDate, endDate);
-  }, [onItemDragEnd, quarters]);
+  }, [onItemDragEnd, quarters, COLORS]);
 
   const handleDblClick = useCallback((item: RoadmapItem & { x: number; width: number }) => {
     if (!onInlineEdit) return;
@@ -268,7 +321,7 @@ export function RoadmapCanvas({ items, selectedItemIds, onSelectItem, onItemDrag
                   <Rect x={-3} y={-3} width={item.width + 6} height={ITEM_HEIGHT + 6} cornerRadius={ITEM_RADIUS + 2} stroke={COLORS.selection} strokeWidth={2} />
                 )}
 
-                <Rect width={item.width} height={ITEM_HEIGHT} cornerRadius={ITEM_RADIUS} fill={COLORS.white} shadowColor="rgba(0,0,0,0.06)" shadowBlur={10} shadowOffsetY={2} />
+                <Rect width={item.width} height={ITEM_HEIGHT} cornerRadius={ITEM_RADIUS} fill={COLORS.white} shadowColor={COLORS.restShadow} shadowBlur={10} shadowOffsetY={2} />
 
                 {/* Left status accent line */}
                 <Rect x={0} y={0} width={3} height={ITEM_HEIGHT} cornerRadius={[ITEM_RADIUS, 0, 0, ITEM_RADIUS]} fill={getStatusColor(item.status)} />
